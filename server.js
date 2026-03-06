@@ -23,8 +23,9 @@ const allowedOrigins = [
   "http://127.0.0.1:5500",
   "http://localhost:5500",
   "http://localhost:3000",
-  "https://your-frontend-domain.vercel.app", // Replace with your actual frontend domain
-  "https://dev-sani-portfolio.vercel.app",   // Example: your portfolio domain
+  "https://devsani-portfolio.vercel.app", // Your actual Vercel domain
+  "https://dev-sani-portfolio.vercel.app",
+  null // Allow file:// protocol for local development
 ];
 
 app.use(cors({
@@ -32,11 +33,11 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
     }
-    return callback(null, true);
+    const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+    return callback(new Error(msg), false);
   },
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
