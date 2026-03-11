@@ -17,27 +17,26 @@ app.use(helmet({
 }));
 
 // =====================
-// CORS CONFIGURATION
+// CORS CONFIGURATION (FIXED - MORE PERMISSIVE)
 // =====================
-const allowedOrigins = [
-  "http://127.0.0.1:5500",
-  "http://localhost:5500",
-  "http://localhost:3000",
-  "https://devsani-portfolio.vercel.app", // Your actual Vercel domain
-  "https://dev-sani-portfolio.vercel.app",
-  null // Allow file:// protocol for local development
-];
-
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    // Allow any Vercel domain
+    if (origin.includes('vercel.app')) return callback(null, true);
+    
+    // Allow localhost for development
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
       return callback(null, true);
     }
-    const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-    return callback(new Error(msg), false);
+    
+    // Allow Railway domains
+    if (origin.includes('railway.app')) return callback(null, true);
+    
+    console.log('Allowed origin:', origin);
+    return callback(null, true);
   },
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -266,7 +265,7 @@ app.post("/send", contactLimiter, async (req, res) => {
               <div class="social-links">
                 <a href="https://github.com/goldenimowire">GitHub</a> | 
                 <a href="https://linkedin.com/in/sani-avdoull-700252284">LinkedIn</a> | 
-                <a href="https://your-portfolio-url.com">Portfolio</a>
+                <a href="https://devsani-portfolio.vercel.app">Portfolio</a>
               </div>
 
               <div class="signature">
